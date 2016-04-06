@@ -1,59 +1,12 @@
-var mongodb = require('./db');
+var mongo = require('./db');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-function User (user){
-	this.name = user.name;
-	this.password = user.password;
-}
+var userSchema = new Schema({
+	username : String,
+	password:String
+});
+
+var User = mongo.model('User',userSchema);
 
 module.exports = User;
-
-User.prototype.save = function(callback){
-	var user = {
-		name = this.name;
-		password = this.password
-	};
-
-	mongodb.open(function(err,db){
-		if(err){
-			return callback(err);
-		}
-
-		db.collection('users',function(err,collection){
-			if(err){
-				mongodb.close();
-				return callback(err);
-			}
-			collection.insert(user,{
-				safe:true
-			},function(err,user){
-				mongodb.close();
-				if(err){
-					return callback(err);
-				}
-				callback(null,user[0]);
-			})
-		})
-	})
-};
-
-User.prototype.get = function(callback){
-	mongodb.open(function(err,db){
-		if(err){
-			return callback(err);
-		}
-		db.collection('users',function(err,collection){
-			if(err){
-				return callback(err);
-			}
-			collection.findOne({
-				name:this.name
-			},function(err,user){
-				mongodb.close();
-				if(err){
-					return callback(err);
-				}
-				callback(null,user);
-			})
-		})
-	})
-};
