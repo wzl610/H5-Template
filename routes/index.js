@@ -1,4 +1,5 @@
 var UserModel = require('../models/user.js');
+var CommentModel = require('../models/comment.js');
 module.exports = function(app){
 	app.get('/',function(req,res){
 		res.render('login',{title:'allen'});
@@ -51,5 +52,36 @@ module.exports = function(app){
 
 	app.get('/react-demo',function(req,res){
 		res.render('react-demo');
-	})
+	});
+
+	app.get('/comment',function(req,res){
+		/*CommentModel.find(function(err,comment)){
+			if(err){
+				res.json({code:1,message:err});
+				return;
+			}else{
+				res.json({code:0,data:comment});
+			}
+		}*/
+		var data = [
+			{
+				'author' : 'Allen',
+				'comment' : 'hello'
+			}
+		];
+		res.json({code:0,data:data});
+	});
+	app.post('/comment',function(req,res){
+		var newComment = new CommentModel({
+			author : req.body.author,
+			comment : req.body.comment
+		});
+		newComment.save(function(err){
+			if(err){
+				res.json({code:1,message:err});
+			}else{
+				res.json({code:0});
+			}
+		})
+	});
 };

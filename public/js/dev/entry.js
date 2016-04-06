@@ -16,14 +16,22 @@ var CommentBox = React.createClass({
 		return {data : []};
 	},
 	componentDidMount:function(){
-		$.getJSON('/comment.json',function(data){
-			this.setState({data:data});
-		});
+		$.ajax({
+	      url: this.props.url,
+	      dataType: 'json',
+	      cache: false,
+	      success: function(data) {
+	        this.setState({data: data.data});
+	      }.bind(this),
+	      error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	      }.bind(this)
+	    });
 	},
 	render : function(){
 		return (
 			<div className="commentBox">
-				<h1>Comments</h1>
+				<h1>Comments</h1> 
 				<CommentList data={this.state.data}/>
 				<CommentForm />
 			</div>
@@ -32,7 +40,7 @@ var CommentBox = React.createClass({
 });
 
 ReactDOM.render(
-	<CommentBox />,
+	<CommentBox url="/comment"/>,
 	document.getElementById('content') //不要加分号！！！
 );
  

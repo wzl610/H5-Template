@@ -64,8 +64,16 @@
 			return { data: [] };
 		},
 		componentDidMount: function componentDidMount() {
-			$.getJSON('/comment.json', function (data) {
-				this.setState({ data: data });
+			$.ajax({
+				url: this.props.url,
+				dataType: 'json',
+				cache: false,
+				success: (function (data) {
+					this.setState({ data: data.data });
+				}).bind(this),
+				error: (function (xhr, status, err) {
+					console.error(this.props.url, status, err.toString());
+				}).bind(this)
 			});
 		},
 		render: function render() {
@@ -83,7 +91,7 @@
 		}
 	});
 
-	ReactDOM.render(React.createElement(CommentBox, null), document.getElementById('content') //不要加分号！！！
+	ReactDOM.render(React.createElement(CommentBox, { url: '/comment' }), document.getElementById('content') //不要加分号！！！
 	);
 
 /***/ },
