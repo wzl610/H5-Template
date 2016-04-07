@@ -48,43 +48,9 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var CommentList = __webpack_require__(159).CommentList,
-	    CommentForm = __webpack_require__(159).CommentForm;
-	var CommentBox = React.createClass({
-		displayName: 'CommentBox',
-
-		getInitialState: function getInitialState() {
-			return { data: [] };
-		},
-		componentDidMount: function componentDidMount() {
-			$.ajax({
-				url: this.props.url,
-				dataType: 'json',
-				cache: false,
-				success: (function (data) {
-					this.setState({ data: data.data });
-				}).bind(this),
-				error: (function (xhr, status, err) {
-					console.error(this.props.url, status, err.toString());
-				}).bind(this)
-			});
-		},
-		render: function render() {
-			return React.createElement(
-				'div',
-				{ className: 'commentBox' },
-				React.createElement(
-					'h1',
-					null,
-					'Comments'
-				),
-				React.createElement(CommentList, { data: this.state.data }),
-				React.createElement(CommentForm, null)
-			);
-		}
-	});
-
-	ReactDOM.render(React.createElement(CommentBox, { url: '/comment' }), document.getElementById('content') //不要加分号！！！
+	var FilterableProductTable = __webpack_require__(159).FilterableProductTable;
+	var products = [{ category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football' }, { category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball' }, { category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball' }, { category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch' }, { category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5' }, { category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7' }];
+	ReactDOM.render(React.createElement(FilterableProductTable, { products: products }), document.getElementById('container') //不要加分号！！！
 	);
 
 /***/ },
@@ -19696,73 +19662,111 @@
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	var React = __webpack_require__(1);
-	var CommentList = React.createClass({
-		displayName: 'CommentList',
+	var SearchBar = React.createClass({
+		displayName: "SearchBar",
 
 		render: function render() {
-			var commentNodes = this.props.data.map(function (comment) {
-				return React.createElement(
-					Comment,
-					{ author: comment.author },
-					comment.text
-				);
+			return React.createElement(
+				"form",
+				null,
+				React.createElement("input", { type: "text", placeholder: "Search.." }),
+				React.createElement("input", { type: "checkbox" }),
+				"Only show products in stock"
+			);
+		}
+	});
+
+	var ProductRow = React.createClass({
+		displayName: "ProductRow",
+
+		render: function render() {
+			var product = this.props.product;
+			var name = product.stocked ? product.name : React.createElement(
+				"span",
+				{ style: { color: 'red' } },
+				product.name
+			);
+			return React.createElement(
+				"p",
+				null,
+				React.createElement(
+					"span",
+					null,
+					name
+				),
+				React.createElement(
+					"span",
+					null,
+					product.price
+				)
+			);
+		}
+	});
+
+	var ProductCategoryRow = React.createClass({
+		displayName: "ProductCategoryRow",
+
+		render: function render() {
+			return React.createElement(
+				"h1",
+				null,
+				this.props.name
+			);
+		}
+	});
+
+	var ProductTable = React.createClass({
+		displayName: "ProductTable",
+
+		render: function render() {
+			var rowArray = [],
+			    lastCatory;
+			this.props.data.forEach(function (item) {
+				if (item.category !== lastCatory) {
+					rowArray.push(React.createElement(ProductCategoryRow, { name: item.category }));
+				}
+				rowArray.push(React.createElement(ProductRow, { product: item }));
+				lastCatory = item.category;
 			});
 			return React.createElement(
-				'div',
-				{ className: 'commentList' },
-				commentNodes
+				"div",
+				null,
+				rowArray
 			);
 		}
 	});
 
-	var CommentForm = React.createClass({
-		displayName: 'CommentForm',
-
-		handleSubmit: function handleSubmit() {
-			e.preventDefault();
-			var author = this.refs.author.value.trim();
-			var text = this.refs.text.value.trim();
-			if (!text || author) {
-				return;
-			}
-			this.refs.author.value = '';
-			this.refs.text.value = '';
-			return;
-		},
-		render: function render() {
-			return React.createElement(
-				'div',
-				{ className: 'CommentForm', onSubmit: this.handleSubmit },
-				React.createElement('input', { type: 'text', placeholder: 'Your name', ref: 'author' }),
-				React.createElement('input', { type: 'text', placeholder: 'Say something...', ref: 'text' }),
-				React.createElement('input', { type: 'submit', value: 'Post' })
-			);
-		}
-	});
-
-	var Comment = React.createClass({
-		displayName: 'Comment',
+	var FilterableProductTable = React.createClass({
+		displayName: "FilterableProductTable",
 
 		render: function render() {
 			return React.createElement(
-				'div',
-				{ className: 'comment' },
+				"div",
+				null,
+				React.createElement(SearchBar, null),
 				React.createElement(
-					'h2',
-					{ className: 'commentAuthor' },
-					this.props.author
+					"div",
+					null,
+					React.createElement(
+						"span",
+						null,
+						"Name"
+					),
+					React.createElement(
+						"span",
+						null,
+						"Price"
+					)
 				),
-				this.props.children
+				React.createElement(ProductTable, { data: this.props.products })
 			);
 		}
 	});
 
-	module.exports.CommentList = CommentList;
-	module.exports.CommentForm = CommentForm;
-	module.exports.Comment = Comment;
+	module.exports.FilterableProductTable = FilterableProductTable;
 
 /***/ }
 /******/ ]);
