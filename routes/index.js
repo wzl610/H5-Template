@@ -63,12 +63,7 @@ module.exports = function(app){
 				res.json({code:0,data:comment});
 			}
 		}*/
-		var data = [
-			{
-				'author' : 'Allen',
-				'comment' : 'hello'
-			}
-		];
+		var data = require('../comment.json');
 		res.json({code:0,data:data});
 	});
 	app.post('/comment',function(req,res){

@@ -50,13 +50,6 @@
 	var ReactDOM = __webpack_require__(158);
 	var CommentList = __webpack_require__(159).CommentList,
 	    CommentForm = __webpack_require__(159).CommentForm;
-	var datas = [{
-		'author': 'Allen',
-		'text': 'hello wrodld'
-	}, {
-		'author': 'May',
-		'text': 'I am a new comment'
-	}];
 	var CommentBox = React.createClass({
 		displayName: 'CommentBox',
 
@@ -19703,11 +19696,11 @@
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
 	var CommentList = React.createClass({
-		displayName: "CommentList",
+		displayName: 'CommentList',
 
 		render: function render() {
 			var commentNodes = this.props.data.map(function (comment) {
@@ -19718,35 +19711,48 @@
 				);
 			});
 			return React.createElement(
-				"div",
-				{ className: "commentList" },
+				'div',
+				{ className: 'commentList' },
 				commentNodes
 			);
 		}
 	});
 
 	var CommentForm = React.createClass({
-		displayName: "CommentForm",
+		displayName: 'CommentForm',
 
+		handleSubmit: function handleSubmit() {
+			e.preventDefault();
+			var author = this.refs.author.value.trim();
+			var text = this.refs.text.value.trim();
+			if (!text || author) {
+				return;
+			}
+			this.refs.author.value = '';
+			this.refs.text.value = '';
+			return;
+		},
 		render: function render() {
 			return React.createElement(
-				"div",
-				{ className: "CommentForm" },
-				"hello , I am a CommentForm"
+				'div',
+				{ className: 'CommentForm', onSubmit: this.handleSubmit },
+				React.createElement('input', { type: 'text', placeholder: 'Your name', ref: 'author' }),
+				React.createElement('input', { type: 'text', placeholder: 'Say something...', ref: 'text' }),
+				React.createElement('input', { type: 'submit', value: 'Post' })
 			);
 		}
 	});
 
 	var Comment = React.createClass({
-		displayName: "Comment",
+		displayName: 'Comment',
 
 		render: function render() {
 			return React.createElement(
-				"div",
-				{ className: "comment" },
+				'div',
+				{ className: 'comment' },
 				React.createElement(
-					"h2",
-					{ className: "commentAuthor" },
+					'h2',
+					{ className: 'commentAuthor' },
 					this.props.author
 				),
 				this.props.children

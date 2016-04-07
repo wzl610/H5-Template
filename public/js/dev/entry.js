@@ -1,16 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var CommentList = require('./comment').CommentList,CommentForm = require('./comment').CommentForm;
-var datas = [
-	{
-		'author' : 'Allen',
-		'text' : 'hello wrodld'
-	},
-	{
-		'author' : 'May',
-		'text' : 'I am a new comment'
-	}
-];      
+var CommentList = require('./comment').CommentList,CommentForm = require('./comment').CommentForm; 
 var CommentBox = React.createClass({
 	getInitialState : function(){
 		return {data : []};
