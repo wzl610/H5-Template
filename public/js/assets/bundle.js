@@ -19668,12 +19668,16 @@
 	var SearchBar = React.createClass({
 		displayName: "SearchBar",
 
+		handleChange: function handleChange() {
+			this.props.onUserChange(this.refs.filterTextInput.value, this.refs.onStockCheck.checked //ref只能引用到本身组件的，不能跨组件取
+			);
+		},
 		render: function render() {
 			return React.createElement(
 				"form",
 				null,
-				React.createElement("input", { type: "text", placeholder: "Search.." }),
-				React.createElement("input", { type: "checkbox" }),
+				React.createElement("input", { type: "text", placeholder: "Search..", value: this.props.filterText, onChange: this.handleChange, ref: "filterTextInput" }),
+				React.createElement("input", { type: "checkbox", checked: this.props.inStockOnly, onChange: this.handleChange, ref: "onStockCheck" }),
 				"Only show products in stock"
 			);
 		}
@@ -19723,8 +19727,13 @@
 
 		render: function render() {
 			var rowArray = [],
-			    lastCatory;
+			    lastCatory,
+			    filterText = this.props.filterText,
+			    inStockOnly = this.props.inStockOnly;
 			this.props.data.forEach(function (item) {
+				if (item.name.indexOf(filterText) === -1 || inStockOnly && !item.stocked) {
+					return;
+				}
 				if (item.category !== lastCatory) {
 					rowArray.push(React.createElement(ProductCategoryRow, { name: item.category }));
 				}
@@ -19742,11 +19751,27 @@
 	var FilterableProductTable = React.createClass({
 		displayName: "FilterableProductTable",
 
+		getInitialState: function getInitialState() {
+			return {
+				filterText: '',
+				inStockOnly: false
+			};
+		},
+		handleChange: function handleChange(inputValue, checkValue) {
+			this.setState({
+				filterText: inputValue,
+				inStockOnly: checkValue
+			});
+		},
 		render: function render() {
 			return React.createElement(
 				"div",
 				null,
-				React.createElement(SearchBar, null),
+				React.createElement(SearchBar, {
+					filterText: this.state.filterText,
+					inStockOnly: this.state.inStockOnly,
+					onUserChange: this.handleChange
+				}),
 				React.createElement(
 					"div",
 					null,
@@ -19761,7 +19786,11 @@
 						"Price"
 					)
 				),
-				React.createElement(ProductTable, { data: this.props.products })
+				React.createElement(ProductTable, {
+					data: this.props.products,
+					filterText: this.state.filterText,
+					inStockOnly: this.state.inStockOnly
+				})
 			);
 		}
 	});
